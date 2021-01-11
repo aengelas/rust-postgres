@@ -189,6 +189,29 @@ impl Client {
         self.prepare_typed(query, &[]).await
     }
 
+    /// Creates a new named prepared statement.
+    ///
+    /// Prepared statements can be executed repeatedly, and may contain query parameters (indicated by `$1`, `$2`, etc),
+    /// which are set when executed. Prepared statements can only be used with the connection that created them. This
+    /// method allows you to specify the name of the prepared statement, which can be useful to work around limitations
+    /// imposed by proxies such as pgbouncer.
+    pub async fn prepare_named(&self, name: String, query: &str) -> Result<Statement, Error> {
+        self.prepare_typed_named(name, query, &[]).await
+    }
+
+    /// Like `prepare_typed`, but allows passing the name of the stored procedure.
+    ///
+    /// The list of types may be smaller than the number of parameters - the types of the remaining parameters will be
+    /// inferred. For example, `client.prepare_typed(query, &[])` is equivalent to `client.prepare(query)`.
+    pub async fn prepare_typed_named(
+        &self,
+        name: String,
+        query: &str,
+        parameter_types: &[Type],
+    ) -> Result<Statement, Error> {
+        prepare::prepare_named(&self.inner, name, query, parameter_types).await
+    }
+
     /// Like `prepare`, but allows the types of query parameters to be explicitly specified.
     ///
     /// The list of types may be smaller than the number of parameters - the types of the remaining parameters will be

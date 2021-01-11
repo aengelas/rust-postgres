@@ -59,6 +59,9 @@ pub trait GenericClient: private::Sealed {
     /// Like `Client::prepare`.
     async fn prepare(&self, query: &str) -> Result<Statement, Error>;
 
+    /// Like `Client::prepare_named`
+    async fn prepare_named(&self, name: String, query: &str) -> Result<Statement, Error>;
+
     /// Like `Client::prepare_typed`.
     async fn prepare_typed(
         &self,
@@ -132,6 +135,10 @@ impl GenericClient for Client {
 
     async fn prepare(&self, query: &str) -> Result<Statement, Error> {
         self.prepare(query).await
+    }
+
+    async fn prepare_named(&self, name: String, query: &str) -> Result<Statement, Error> {
+        self.prepare_named(name, query).await
     }
 
     async fn prepare_typed(
@@ -210,6 +217,10 @@ impl GenericClient for Transaction<'_> {
 
     async fn prepare(&self, query: &str) -> Result<Statement, Error> {
         self.prepare(query).await
+    }
+
+    async fn prepare_named(&self, name: String, query: &str) -> Result<Statement, Error> {
+        self.prepare_named(name, query).await
     }
 
     async fn prepare_typed(

@@ -304,6 +304,33 @@ impl Client {
         self.connection.block_on(self.client.prepare(query))
     }
 
+    /// Creates a new named prepared statement.
+    ///
+    /// Prepared statements can be executed repeatedly, and may contain query parameters (indicated by `$1`, `$2`, etc),
+    /// which are set when executed. Prepared statements can only be used with the connection that created them.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use postgres::{Client, NoTls};
+    ///
+    /// # fn main() -> Result<(), postgres::Error> {
+    /// let mut client = Client::connect("host=localhost user=postgres", NoTls)?;
+    ///
+    /// let statement = client.prepare_named("mynewselect".to_string(), "SELECT name FROM people WHERE id = $1")?;
+    ///
+    /// for id in 0..10 {
+    ///     let rows = client.query(&statement, &[&id])?;
+    ///     let name: &str = rows[0].get(0);
+    ///     println!("name: {}", name);
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn prepare_named(&mut self, name: String, query: &str) -> Result<Statement, Error> {
+        self.connection.block_on(self.client.prepare_named(name, query))
+    }
+
     /// Like `prepare`, but allows the types of query parameters to be explicitly specified.
     ///
     /// The list of types may be smaller than the number of parameters - the types of the remaining parameters will be

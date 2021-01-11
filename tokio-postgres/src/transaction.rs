@@ -93,6 +93,11 @@ impl<'a> Transaction<'a> {
         self.client.prepare(query).await
     }
 
+    /// Like `Client::prepare_named`.
+    pub async fn prepare_named(&self, name: String, query: &str) -> Result<Statement, Error> {
+        self.client.prepare_named(name, query).await
+    }
+
     /// Like `Client::prepare_typed`.
     pub async fn prepare_typed(
         &self,

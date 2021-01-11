@@ -47,6 +47,9 @@ pub trait GenericClient: private::Sealed {
     /// Like `Client::prepare`.
     fn prepare(&mut self, query: &str) -> Result<Statement, Error>;
 
+    /// Like `Client::prepare`.
+    fn prepare_named(&mut self, name: String, query: &str) -> Result<Statement, Error>;
+
     /// Like `Client::prepare_typed`.
     fn prepare_typed(&mut self, query: &str, types: &[Type]) -> Result<Statement, Error>;
 
@@ -117,6 +120,10 @@ impl GenericClient for Client {
 
     fn prepare(&mut self, query: &str) -> Result<Statement, Error> {
         self.prepare(query)
+    }
+
+    fn prepare_named(&mut self, name: String, query: &str) -> Result<Statement, Error> {
+        self.prepare_named(name, query)
     }
 
     fn prepare_typed(&mut self, query: &str, types: &[Type]) -> Result<Statement, Error> {
@@ -197,6 +204,10 @@ impl GenericClient for Transaction<'_> {
 
     fn prepare(&mut self, query: &str) -> Result<Statement, Error> {
         self.prepare(query)
+    }
+
+    fn prepare_named(&mut self, name: String, query: &str) -> Result<Statement, Error> {
+        self.prepare_named(name, query)
     }
 
     fn prepare_typed(&mut self, query: &str, types: &[Type]) -> Result<Statement, Error> {

@@ -63,7 +63,17 @@ pub async fn prepare(
     query: &str,
     types: &[Type],
 ) -> Result<Statement, Error> {
-    let name = format!("s{}", NEXT_ID.fetch_add(1, Ordering::SeqCst));
+        let name = format!("s{}", NEXT_ID.fetch_add(1, Ordering::SeqCst));
+
+        prepare_named(client, name, query, types).await
+}
+
+pub async fn prepare_named(
+    client: &Arc<InnerClient>,
+    name: String,
+    query: &str,
+    types: &[Type],
+) -> Result<Statement, Error> {
     let buf = encode(client, &name, query, types)?;
     let mut responses = client.send(RequestMessages::Single(FrontendMessage::Raw(buf)))?;
 

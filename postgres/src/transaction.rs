@@ -51,6 +51,12 @@ impl<'a> Transaction<'a> {
             .block_on(self.transaction.as_ref().unwrap().prepare(query))
     }
 
+    /// Like `Client::prepare_named`.
+    pub fn prepare_named(&mut self, name: String, query: &str) -> Result<Statement, Error> {
+        self.connection
+            .block_on(self.transaction.as_ref().unwrap().prepare_named(name, query))
+    }
+
     /// Like `Client::prepare_typed`.
     pub fn prepare_typed(&mut self, query: &str, types: &[Type]) -> Result<Statement, Error> {
         self.connection.block_on(

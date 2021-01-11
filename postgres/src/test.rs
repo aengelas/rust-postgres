@@ -23,6 +23,17 @@ fn prepare() {
 }
 
 #[test]
+fn prepare_named() {
+    let mut client = Client::connect("host=localhost port=5433 user=postgres", NoTls).unwrap();
+
+    let stmt = client.prepare_named("testquery".to_string(), "SELECT 1::INT, $1::TEXT").unwrap();
+    assert_eq!(stmt.params(), &[Type::TEXT]);
+    assert_eq!(stmt.columns().len(), 2);
+    assert_eq!(stmt.columns()[0].type_(), &Type::INT4);
+    assert_eq!(stmt.columns()[1].type_(), &Type::TEXT);
+}
+
+#[test]
 fn query_prepared() {
     let mut client = Client::connect("host=localhost port=5433 user=postgres", NoTls).unwrap();
 
